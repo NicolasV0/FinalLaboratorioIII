@@ -32,9 +32,14 @@ public class AlumnoController {
          alumnoService.modificarAlumno(id);
     }
 
-    @GetMapping("/alumno/{id}/asignatura/{idasignatura}")
-    public Asignatura consultarAsignauraAlumno(@PathVariable int id, @PathVariable int idasignatura){
-        return alumnoService.consultarAsigAlumn(id,idasignatura);
+    @PutMapping("/alumno/{id}/asignatura/{idasignatura}")
+    public void modificarAsignauraAlumno(@PathVariable int id, @PathVariable int idasignatura){
+        alumnoService.modificarAsigAlumn(id,idasignatura);
+    }
+
+    @PutMapping("/alumno/{id}/asignatura/{idasig}/cargar")
+    public void agregarAsigaAlumno(@PathVariable int id, @PathVariable int idasig){
+        alumnoService.agregarAsigaAlumno(id,idasig);
     }
 
     @DeleteMapping("/alumno/{id}")

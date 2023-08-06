@@ -1,6 +1,5 @@
 package com.laboratorio.laboratorio.DAO;
 
-import com.laboratorio.laboratorio.Models.Alumno;
 import com.laboratorio.laboratorio.Models.Carrera;
 import com.laboratorio.laboratorio.Models.Materia;
 
