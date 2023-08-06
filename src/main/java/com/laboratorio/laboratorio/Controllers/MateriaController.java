@@ -1,5 +1,4 @@
 package com.laboratorio.laboratorio.Controllers;
-import com.laboratorio.laboratorio.Models.Alumno;
 import com.laboratorio.laboratorio.Models.Materia;
 import com.laboratorio.laboratorio.Service.MateriaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,11 @@ public class MateriaController {
         }else {
             return new ResponseEntity<>("ERROR",HttpStatus.BAD_REQUEST);
         }
+    }
+    @PostMapping("/materias/load")
+    public ResponseEntity<String> loadMaterias (){
+        materiaService.loadMaterias();
+        return new ResponseEntity<>("Materias creadas",HttpStatus.OK);
     }
 
 }

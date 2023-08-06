@@ -1,4 +1,5 @@
 package com.laboratorio.laboratorio.Controllers;
+import com.laboratorio.laboratorio.Exception.*;
 import com.laboratorio.laboratorio.Models.Materia;
 import com.laboratorio.laboratorio.Models.Profesor;
 import com.laboratorio.laboratorio.Service.ProfesorService;
@@ -17,19 +18,42 @@ public class ProfesorController {
 
     @PostMapping("/profesor")
     public ResponseEntity<String> crearProfesor (@RequestBody Profesor profesor){
-        if (profesorService.crearProfesor(profesor) == true){
-            return new ResponseEntity<>("Creado",HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(" No creado",HttpStatus.BAD_GATEWAY);
+    try{
+        profesorService.crearProfesor(profesor);
+        return new ResponseEntity<>("Creado",HttpStatus.OK);
+    }catch (DatosIncompletosException e){
+            return new ResponseEntity<>("Datos incompletos " +e,HttpStatus.CONFLICT);
         }
+    catch (ProfesorExisteException e){
+        return new ResponseEntity<>(" No creado " +e,HttpStatus.CONFLICT);
+    }
+
     }
 
     @PutMapping("/profesor/{idProfesor}")
     public ResponseEntity<String> modificarProfesor(@PathVariable int idProfesor){
-        if (profesorService.modificarProfesor(idProfesor) == true){
+        try {
+            profesorService.modificarProfesor(idProfesor);
             return new ResponseEntity<>("Modificacion correcta",HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>("Datos incorrectos",HttpStatus.BAD_GATEWAY);
+
+        }catch (DatosIncompletosException e){
+            return new ResponseEntity<>("Datos incorrectos "+e,HttpStatus.BAD_GATEWAY);
+
+        }catch (ListaVacia e){
+            return new ResponseEntity<>("No encontrado "+e,HttpStatus.NO_CONTENT);
+
+        }
+        catch (ProfesorExisteException e){
+            return new ResponseEntity<>("Profesor ya en sistema con ese dni "+e,HttpStatus.CONFLICT);
+
+        }
+
+        catch (ProfesorNoExistente e){
+            return new ResponseEntity<>("Profesorno en sistema con ese dni "+e,HttpStatus.NOT_FOUND);
+
+        }
+        catch (DatosIncorrectos e){
+            return new ResponseEntity<>("Atributos mal ingresados" +e,HttpStatus.CONFLICT);
         }
     }
 

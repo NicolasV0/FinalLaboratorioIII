@@ -1,12 +1,9 @@
 package com.laboratorio.laboratorio.Service;
-
 import com.laboratorio.laboratorio.DAO.ProfesorDAO;
+import com.laboratorio.laboratorio.Exception.DatosIncompletosException;
 import com.laboratorio.laboratorio.Models.Materia;
 import com.laboratorio.laboratorio.Models.Profesor;
 import org.springframework.stereotype.Service;
-
-import javax.sound.sampled.Port;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -14,13 +11,11 @@ public class ProfesorService {
     public ProfesorService() {
     }
 
-    public boolean crearProfesor(Profesor profesor){
-        if (validarDatos(profesor) == true){
-            ProfesorDAO profesorDAO = new ProfesorDAO();
-            return profesorDAO.crearProfesor(profesor);
-        }else {
-            return false;
-        }
+    public void crearProfesor(Profesor profesor) throws RuntimeException{
+        validarDatos(profesor);
+        ProfesorDAO profesorDAO = new ProfesorDAO();
+        profesorDAO.crearProfesor(profesor);
+
     }
 
     public List<Profesor> getProfesores(){
@@ -29,12 +24,12 @@ public class ProfesorService {
     }
 
 
-    public boolean modificarProfesor(int id){
-        if (id == 0){
-            return false;
+    public void modificarProfesor(int id)  throws RuntimeException{
+        if (id == 0 || id <= 0){
+            throw new DatosIncompletosException("ID no puede ser 0 o menor");
         }
         ProfesorDAO profesorDAO = new ProfesorDAO();
-        return profesorDAO.modificarProfesor(id);
+        profesorDAO.modificarProfesor(id);
 
     }
 
@@ -48,27 +43,26 @@ public class ProfesorService {
 
     public List<Materia> listaMaterias(Profesor profesor){
         ProfesorDAO profesorDAO = new ProfesorDAO();
-        if (validarDatos(profesor) == true){
-            return profesorDAO.listaMateria(profesor);
+        validarDatos(profesor);
+        return profesorDAO.listaMateria(profesor);
         }
-        return null;
-    }
 
 
-    private boolean validarDatos(Profesor profesor) {
+    private void validarDatos (Profesor profesor) throws RuntimeException{
+
+
         if (profesor.getNombre().isEmpty() || profesor.getNombre() == null){
-            return false;
+            throw new DatosIncompletosException("Name is required");
         } else if (profesor.getApellido().isEmpty() || profesor.getApellido() == null){
-            return false;
+            throw new DatosIncompletosException("LastName is required");
         }
-        else if (profesor.getApellido().isEmpty() || profesor.getApellido() == null){
-            return false;
+        else if (profesor.getId() ==0 || (profesor.getId() <= 0) ){
+            throw new DatosIncompletosException("ID is required");
         }
-        else {
-            return true;
+        else if (profesor.getDni() ==0 || (profesor.getDni() <= 0) ){
+            throw new DatosIncompletosException("Dni is required");
         }
     }
-
 
 
     }

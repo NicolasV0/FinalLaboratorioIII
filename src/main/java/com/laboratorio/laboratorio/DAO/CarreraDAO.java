@@ -1,6 +1,5 @@
 package com.laboratorio.laboratorio.DAO;
 
-import com.laboratorio.laboratorio.Models.Alumno;
 import com.laboratorio.laboratorio.Models.Carrera;
 import com.laboratorio.laboratorio.Models.Materia;
 
@@ -19,7 +18,7 @@ public class CarreraDAO {
     }
 
 
-    public void cargarCarreras(){
+    public void loadCarreras(){
         List<Materia> listaMaterias = new ArrayList<>();
         MateriaDAO materiaDAO = new MateriaDAO();
         listaMaterias =  materiaDAO.getMaterias();

@@ -29,8 +29,13 @@ public class AlumnoService {
         alumnoDAO.modificarAlumno(id);
     }
 
-    public Asignatura consultarAsigAlumn(int id, int idAsig){
+    public void modificarAsigAlumn(int id, int idAsig){
         AlumnoDAOImpl alumnoDAO = new AlumnoDAOImpl();
-        return alumnoDAO.consultarAsigAlumno(id,idAsig);
+        alumnoDAO.modificarAsigAlumno(id,idAsig);
+    }
+
+    public void agregarAsigaAlumno(int id,int idasig){
+        AlumnoDAOImpl alumnoDAO = new AlumnoDAOImpl();
+        alumnoDAO.agregarAsigaAlumno(id,idasig);
     }
 }

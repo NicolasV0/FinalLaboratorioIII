@@ -20,7 +20,7 @@ public class MateriaDAO {
         return listaMaterias;
     }
 
-    public static void cargarMateria() {
+    public static void loadMaterias() {
         int[] co = {0};
         int[] co1 = {1,2};
         int[] co2 = {3};

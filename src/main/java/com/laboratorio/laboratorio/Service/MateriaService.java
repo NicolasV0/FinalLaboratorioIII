@@ -17,6 +17,11 @@ public class MateriaService {
         return materiaDAO.getMaterias();
     }
 
+    public void loadMaterias(){
+        MateriaDAO materiaDAO = new MateriaDAO();
+        materiaDAO.loadMaterias();
+    }
+
     public boolean crearMateria(Materia materia){
         if (validarDatos(materia) == false){
             return false;

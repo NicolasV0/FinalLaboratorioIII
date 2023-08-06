@@ -1,5 +1,9 @@
 package com.laboratorio.laboratorio.DAO;
 
+import com.laboratorio.laboratorio.Exception.DatosIncorrectos;
+import com.laboratorio.laboratorio.Exception.ListaVacia;
+import com.laboratorio.laboratorio.Exception.ProfesorExisteException;
+import com.laboratorio.laboratorio.Exception.ProfesorNoExistente;
 import com.laboratorio.laboratorio.Models.Materia;
 import com.laboratorio.laboratorio.Models.Profesor;
 
@@ -28,11 +32,13 @@ public class ProfesorDAO {
         return null;
     }
 
-    public boolean crearProfesor(Profesor profesor){
-
+    public void crearProfesor(Profesor profesor) throws RuntimeException {
         for (Profesor x:listaProfesores) {
             if (x.getDni() == profesor.getDni()){
-                return false;
+                throw new ProfesorExisteException("Profesor ya registrado con ese dni");
+            }
+            if(x.getId() == profesor.getId()){
+                throw new ProfesorExisteException("Profesor ya registrado con ese ID");
             }
         }
         Profesor profesor1 = new Profesor();
@@ -41,21 +47,20 @@ public class ProfesorDAO {
         profesor1.setId(profesor.getId());
         profesor1.setDni(profesor.getDni());
         listaProfesores.add(profesor1);
-        return true;
     }
 
-    public boolean modificarProfesor(int id){
+    public void modificarProfesor(int id) throws RuntimeException{
         int opcion;
         Scanner scanner = new Scanner(System.in);
-        if (validarProfesor(id) == true){
-            while (true){
-                System.out.println("Que atributo desea cambiar de profesor");
-                System.out.println("1)Nombre");
-                System.out.println("2)Apellido");
-                System.out.println("3)Dni");
-                System.out.println("4)Salir");
-                opcion = scanner.nextInt();
-                if (opcion == 1){
+        validarProfesor(id);
+        while (true){
+            System.out.println("Que atributo desea cambiar de profesor");
+            System.out.println("1)Nombre");
+            System.out.println("2)Apellido");
+            System.out.println("3)Dni");
+            System.out.println("4)Salir");
+            opcion = scanner.nextInt();
+            if (opcion == 1){
                     System.out.println("Nombre nuevo: ");
                     String nombre = scanner.next();
                     for (Profesor profe:listaProfesores) {
@@ -68,7 +73,6 @@ public class ProfesorDAO {
                             }
                         }
                     }
-
                 } else if (opcion == 2){
                     System.out.println("Apellido nuevo: ");
                     String apellido = scanner.next();
@@ -86,6 +90,12 @@ public class ProfesorDAO {
                     System.out.println("Dni nuevo: ");
                     int dni = scanner.nextInt();
                     for (Profesor profe:listaProfesores) {
+                        if (dni <= 0){
+                            throw new DatosIncorrectos("DNI no puede ser 0 o menor");
+                        }
+                        if (profe.getDni() == dni){
+                            throw new ProfesorExisteException("Ya existe un profesor con ese dni");
+                        }
                         if (profe.getId() == id){
                             profe.setDni(dni);
                         }
@@ -93,43 +103,37 @@ public class ProfesorDAO {
 
                 }
                  else if (opcion == 4) {
-                    return true;
+                    return;
                 }
-
             }
-
-
-        }
-
-        return false;
     }
 
     public boolean eliminarProfesor(int id){
-        if (validarProfesor(id) == true){
-            for (Profesor profesor:listaProfesores) {
-                if (profesor.getId() == id){
-                    for (Materia materia: profesor.getMateriasDictadas()) {
-                        materia.setIdProfesor(0);
-                        materia.setProfesor("");
-                    }
-                    listaProfesores.remove(profesor);
-                    return true;
+        validarProfesor(id);
+        for (Profesor profesor:listaProfesores) {
+            if (profesor.getId() == id){
+                for (Materia materia: profesor.getMateriasDictadas()) {
+                    materia.setIdProfesor(0);
+                    materia.setProfesor("");
                 }
-            }
-        }
-        return false;
-    }
-
-    private boolean validarProfesor(int id){
-        if (listaProfesores.isEmpty()) {
-            return false;
-        }
-        for (Profesor profe:listaProfesores) {
-            if (profe.getId() == id){
+                listaProfesores.remove(profesor);
                 return true;
             }
         }
+
         return false;
+    }
+
+    private void validarProfesor(int id){
+        if (listaProfesores.isEmpty()) {
+            throw new ListaVacia("No hay profesores cargados");
+        }
+        for (Profesor profe:listaProfesores) {
+            if (profe.getId() != id){
+                throw new ProfesorNoExistente("No existe el profesor en el sistema");
+            }
+        }
+
     }
 
 
