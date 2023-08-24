@@ -1,10 +1,11 @@
 package com.laboratorio.laboratorio.DAO;
 
+import com.laboratorio.laboratorio.Exception.AlumnoExistenteException;
+import com.laboratorio.laboratorio.Exception.DatosIncorrectos;
+import com.laboratorio.laboratorio.Exception.ListaVacia;
 import com.laboratorio.laboratorio.Models.*;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Scanner;
 
 
@@ -16,7 +17,7 @@ public class AlumnoDAOImpl implements AlumnoDAO{
 
     }
 
-    public void crearAlumno(Alumno alumno){
+    public void crearAlumno(Alumno alumno) throws RuntimeException{
         Alumno alumno1 = new Alumno();
         alumno1.setNombre(alumno.getNombre());
         alumno1.setApellido(alumno.getApellido());
@@ -25,6 +26,7 @@ public class AlumnoDAOImpl implements AlumnoDAO{
         alumno1.setPassword(alumno.getPassword());
         CarreraDAO carreraDAO = new CarreraDAO();
         alumno1.setCarrera(carreraDAO.obtenerCarrera(alumno.getCarrera()));
+        buscarAlumnoDni(alumno1.getDni());
         for (Materia mat:alumno1.getCarrera().getMateriaCarrera()) {
             for (Integer correlatividad:mat.getCorrelatividades()) {
                 if (correlatividad.equals(0)){
@@ -39,22 +41,17 @@ public class AlumnoDAOImpl implements AlumnoDAO{
 
         }
 
-
-
-
         listaAlumnos.add(alumno1);
     }
 
-    public void modificarAlumno(int id) {
+    public void modificarAlumno(int id) throws RuntimeException {
         int opcion2;
         if (listaAlumnos.isEmpty()) {
-            System.out.println("no se ingreso ninguna alumno todavia");
-            return;
+            throw new ListaVacia("No hay ninguna alumno ingresado");
         }
         for (Alumno alumno : listaAlumnos) {
             if (alumno.getId() == id) {
             }
-
             while (true) {
                 System.out.println("Que atributo desea cambiar de Alumno");
                 System.out.println("1)Nombre");
@@ -68,20 +65,30 @@ public class AlumnoDAOImpl implements AlumnoDAO{
                 if (opcion2 == 1) {
                     System.out.println("Nombre nuevo: ");
                     String nombre = scanner2.next();
+                    if (nombre == ""){
+                        throw new DatosIncorrectos("Nombre no puede estar vacio");
+                    }
                     alumno.setNombre(nombre);
 
                 } else if (opcion2 == 2) {
                     System.out.println("Apellido nuevo: ");
                     String apellido = scanner2.next();
+                    if (apellido == ""){
+                        throw new DatosIncorrectos("Apellido no puede estar vacio");
+                    }
                     alumno.setApellido(apellido);
 
                 } else if (opcion2 == 3) {
                     System.out.println("Dni nuevo: ");
                     int dni = scanner2.nextInt();
+                    buscarAlumnoDni(dni);
                     alumno.setDni(dni);
                 } else if (opcion2 == 4) {
                     System.out.println("Password nuevo: ");
                     String pass = scanner2.next();
+                    if (pass == ""){
+                        throw new DatosIncorrectos("Password no puede estar vacio");
+                    }
                     alumno.setPassword(pass);
                 } else if (opcion2 == 5) {
                     return;
@@ -184,5 +191,15 @@ public class AlumnoDAOImpl implements AlumnoDAO{
             }
         }
         return false;
+    }
+
+
+
+    private void buscarAlumnoDni(int dni) throws RuntimeException{
+        for (Alumno al:listaAlumnos) {
+            if (al.getDni().equals(dni)){
+                throw new AlumnoExistenteException("Alumno ya creado");
+            }
+        }
     }
 }

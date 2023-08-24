@@ -1,6 +1,6 @@
 package com.laboratorio.laboratorio.Controllers;
+import com.laboratorio.laboratorio.Exception.*;
 import com.laboratorio.laboratorio.Models.Alumno;
-import com.laboratorio.laboratorio.Models.Asignatura;
 import com.laboratorio.laboratorio.Service.AlumnoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,13 +23,39 @@ public class AlumnoController {
     }
     @PostMapping("/alumno")
     @ResponseStatus(HttpStatus.CREATED)
-    public void crearAlumno (@RequestBody Alumno alumno){
-        alumnoService.crearAlumno(alumno);
+    public ResponseEntity<String> crearAlumno (@RequestBody Alumno alumno){
+        try {
+            alumnoService.crearAlumno(alumno);
+            return new ResponseEntity<>("Alumno creado",HttpStatus.OK);
+        }catch (DatosIncompletosException e){
+            return new ResponseEntity<>(""+e,HttpStatus.BAD_REQUEST);
+        }catch (DatosIncorrectos e){
+            return new ResponseEntity<>(""+e,HttpStatus.BAD_REQUEST);
+        }
+        catch (AlumnoExistenteException e){
+            return new ResponseEntity<>(""+e,HttpStatus.CONFLICT);
+        }
+
+
     }
 
     @PutMapping("/alumno/{id}")
-    public void modificarAlumno(@PathVariable int id){
-         alumnoService.modificarAlumno(id);
+    public ResponseEntity<String> modificarAlumno(@PathVariable int id){
+        try {
+            alumnoService.modificarAlumno(id);
+            return new ResponseEntity<>("Modificacion realizada",HttpStatus.OK);
+
+        } catch (DatosIncorrectos e){
+            return new ResponseEntity<>(""+ e,HttpStatus.BAD_GATEWAY);
+        } catch (ListaVacia e){
+            return new ResponseEntity<>(""+ e,HttpStatus.NO_CONTENT);
+        }
+        catch (AlumnoExistenteException e){
+            return new ResponseEntity<>(""+ e,HttpStatus.CONFLICT);
+        }
+
+
+
     }
 
     @PutMapping("/alumno/{id}/asignatura/{idasignatura}")

@@ -1,6 +1,7 @@
 package com.laboratorio.laboratorio.Service;
 import com.laboratorio.laboratorio.DAO.ProfesorDAO;
 import com.laboratorio.laboratorio.Exception.DatosIncompletosException;
+import com.laboratorio.laboratorio.Exception.DatosIncorrectos;
 import com.laboratorio.laboratorio.Models.Materia;
 import com.laboratorio.laboratorio.Models.Profesor;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ public class ProfesorService {
     }
 
     public List<Profesor> getProfesores(){
+
         ProfesorDAO profesorDAO = new ProfesorDAO();
         return profesorDAO.getProfesores();
     }
@@ -33,9 +35,9 @@ public class ProfesorService {
 
     }
 
-    public boolean eliminarProfesor(int id){
-        if (id == 0){
-            return false;
+    public boolean eliminarProfesor(int id) throws RuntimeException{
+        if (id == 0 || id <= 0){
+            throw new DatosIncorrectos("Id no puede ser menor igual que 0");
         }
         ProfesorDAO profesorDAO = new ProfesorDAO();
         return profesorDAO.eliminarProfesor(id);

@@ -58,11 +58,19 @@ public class ProfesorController {
     }
 
     @DeleteMapping("/profesor/{idProfesor}")
-    public ResponseEntity<String> eliminarProfesor(@PathVariable int idProfesor){
-        if (profesorService.eliminarProfesor(idProfesor) == true){
-            return new ResponseEntity<>("Eliminacion correcta",HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>("Datos incorrectos",HttpStatus.BAD_GATEWAY);
+    public ResponseEntity<String> eliminarProfesor(@PathVariable int idProfesor) {
+
+        try {
+            profesorService.eliminarProfesor(idProfesor);
+            return new ResponseEntity<>("Eliminacion correcta", HttpStatus.OK);
+        } catch (DatosIncorrectos error) {
+            return new ResponseEntity<>("Datos incorrectos", HttpStatus.BAD_GATEWAY);
+        }
+        catch (ListaVacia e){
+            return new ResponseEntity<>("No hay profesores cargados",HttpStatus.NO_CONTENT);
+        }
+        catch (ProfesorNoExistente e){
+            return new ResponseEntity<>("No existe ese profesor",HttpStatus.NOT_FOUND);
         }
     }
 

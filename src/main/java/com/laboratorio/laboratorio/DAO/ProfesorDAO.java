@@ -7,10 +7,7 @@ import com.laboratorio.laboratorio.Exception.ProfesorNoExistente;
 import com.laboratorio.laboratorio.Models.Materia;
 import com.laboratorio.laboratorio.Models.Profesor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class ProfesorDAO {
     static List<Profesor> listaProfesores = new ArrayList<>();
@@ -52,7 +49,7 @@ public class ProfesorDAO {
     public void modificarProfesor(int id) throws RuntimeException{
         int opcion;
         Scanner scanner = new Scanner(System.in);
-        validarProfesor(id);
+        Profesor profesorEncontrado =  validarProfesor(id);
         while (true){
             System.out.println("Que atributo desea cambiar de profesor");
             System.out.println("1)Nombre");
@@ -63,43 +60,35 @@ public class ProfesorDAO {
             if (opcion == 1){
                     System.out.println("Nombre nuevo: ");
                     String nombre = scanner.next();
-                    for (Profesor profe:listaProfesores) {
-                        if (profe.getId() == id){
-                            profe.setNombre(nombre);
-                            for (Materia materia: profe.getMateriasDictadas()) {
-                                String[] cadena = materia.getProfesor().split(" ");
-                                String apellido = cadena[1];
-                                materia.setProfesor(nombre +" "+ apellido);
-                            }
-                        }
+                    profesorEncontrado.setNombre(nombre);
+                    for (Materia materia: profesorEncontrado.getMateriasDictadas()) {
+                        String[] cadena = materia.getProfesor().split(" ");
+                        String apellido = cadena[1];
+                        materia.setProfesor(nombre +" "+ apellido);
                     }
+
                 } else if (opcion == 2){
                     System.out.println("Apellido nuevo: ");
                     String apellido = scanner.next();
-                    for (Profesor profe:listaProfesores) {
-                        if (profe.getId() == id){
-                            profe.setApellido(apellido);
-                            for (Materia materia: profe.getMateriasDictadas()) {
-                                String[] cadena = materia.getProfesor().split(" ");
-                                String nombre = cadena[0];
-                                materia.setProfesor(nombre +" "+ apellido);
-                            }
-                        }
+                    profesorEncontrado.setApellido(apellido);
+                    for (Materia materia: profesorEncontrado.getMateriasDictadas()) {
+                        String[] cadena = materia.getProfesor().split(" ");
+                        String nombre = cadena[0];
+                        materia.setProfesor(nombre +" "+ apellido);
                     }
                 }else if (opcion == 3){
                     System.out.println("Dni nuevo: ");
                     int dni = scanner.nextInt();
+                    if (dni <= 0){
+                    throw new DatosIncorrectos("DNI no puede ser 0 o menor");
+                    }
                     for (Profesor profe:listaProfesores) {
-                        if (dni <= 0){
-                            throw new DatosIncorrectos("DNI no puede ser 0 o menor");
-                        }
                         if (profe.getDni() == dni){
+                            System.err.print("Ya existe un profesor con ese dni");
                             throw new ProfesorExisteException("Ya existe un profesor con ese dni");
                         }
-                        if (profe.getId() == id){
-                            profe.setDni(dni);
-                        }
                     }
+                    profesorEncontrado.setDni(dni);
 
                 }
                  else if (opcion == 4) {
@@ -108,7 +97,7 @@ public class ProfesorDAO {
             }
     }
 
-    public boolean eliminarProfesor(int id){
+    public boolean eliminarProfesor(int id) throws RuntimeException{
         validarProfesor(id);
         for (Profesor profesor:listaProfesores) {
             if (profesor.getId() == id){
@@ -124,15 +113,23 @@ public class ProfesorDAO {
         return false;
     }
 
-    private void validarProfesor(int id){
+    private Profesor validarProfesor(int id) throws RuntimeException{
+        Profesor profEncontrado = null;
+        Iterator<Profesor> it = listaProfesores.iterator();
         if (listaProfesores.isEmpty()) {
             throw new ListaVacia("No hay profesores cargados");
         }
-        for (Profesor profe:listaProfesores) {
-            if (profe.getId() != id){
-                throw new ProfesorNoExistente("No existe el profesor en el sistema");
+        while (it.hasNext() && profEncontrado == null){
+            Profesor p = it.next();
+            if (p.getId() == id){
+                profEncontrado = p;
             }
         }
+
+        if (profEncontrado == null){
+            throw new ProfesorNoExistente("No existe el profesor en el sistema");
+        }
+        return profEncontrado;
 
     }
 

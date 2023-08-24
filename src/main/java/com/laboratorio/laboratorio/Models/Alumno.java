@@ -7,8 +7,8 @@ public class Alumno {
     private String nombre;
     private String apellido;
     private String password;
-    private int dni;
-    private int id;
+    private Integer dni;
+    private Integer id;
     private Carrera carrera;
     private List<Asignatura> asignaturas;
 
@@ -41,7 +41,7 @@ public class Alumno {
 
 
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -77,7 +77,7 @@ public class Alumno {
         this.password = password;
     }
 
-    public int getDni() {
+    public Integer getDni() {
         return dni;
     }
 
